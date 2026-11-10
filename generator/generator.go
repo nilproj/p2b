@@ -103,7 +103,13 @@ type DMMF struct {
 }
 
 type Datamodel struct {
+	Enums  []Enum  `json:"enums"`
 	Models []Model `json:"models"`
+}
+
+type Enum struct {
+	IName
+	Values []IName `json:"values"`
 }
 
 type Model struct {

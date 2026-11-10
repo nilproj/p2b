@@ -2,6 +2,15 @@
 
 package model
 
+{{range $enum := .Enums}}
+type {{$enum.Name}} string
+const (
+  {{range $value := $enum.Values -}}
+  {{$enum.Name}}{{$value.Name}} {{$enum.Name}} = "{{$value.DBName}}"
+  {{end}}
+)
+{{end}}
+
 {{range $model := .Models}}
 type {{$model.Name}} struct {
   bun.BaseModel `bun:"table:{{$model.DBName}}"`
