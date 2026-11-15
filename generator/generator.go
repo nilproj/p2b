@@ -124,15 +124,15 @@ type Key struct {
 
 type Field struct {
 	IName
-	Type               FieldType  `json:"type"`
-	List               bool       `json:"isList"`
-	ID                 bool       `json:"isID"`
-	Required           bool       `json:"isRequired"`
-	Default            FieldValue `json:"default"`
-	RelationName       string     `json:"relationName"`
-	RelationFromFields []string   `json:"relationFromFields"`
-	RelationToFields   []string   `json:"relationToFields"`
-	Documentation      string     `json:"documentation"`
+	Type               FieldType `json:"type"`
+	List               bool      `json:"isList"`
+	ID                 bool      `json:"isID"`
+	Required           bool      `json:"isRequired"`
+	Default            any       `json:"default"`
+	RelationName       string    `json:"relationName"`
+	RelationFromFields []string  `json:"relationFromFields"`
+	RelationToFields   []string  `json:"relationToFields"`
+	Documentation      string    `json:"documentation"`
 
 	model *Model
 }
@@ -171,8 +171,14 @@ func (f Field) Tags() string {
 		if f.ID || slices.Contains(f.model.PrimaryKey.Fields, f.Name) {
 			tags = append(tags, "pk")
 		}
-		if f.Default.Name == "autoincrement" {
-			tags = append(tags, "autoincrement")
+		switch v := f.Default.(type) {
+		case nil:
+		case map[string]any:
+			if v["name"] == "autoincrement" {
+				tags = append(tags, "autoincrement")
+			}
+		default:
+			tags = append(tags, "nullzero")
 		}
 	}
 
